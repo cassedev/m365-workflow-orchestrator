@@ -1,5 +1,3 @@
-Categoría: Casos de Uso Empresariales | Centro de Excelencia CX (Telecomunicaciones)
-
 # Gestión Centralizada de Solicitudes: Research, Diseño e Implementaciones (R&D-I)
 
 ![Microsoft Forms](https://img.shields.io/badge/Microsoft%20Forms-008272?style=for-the-badge&logo=microsoftforms&logoColor=white)
@@ -9,6 +7,8 @@ Categoría: Casos de Uso Empresariales | Centro de Excelencia CX (Telecomunicaci
 ![Outlook](https://img.shields.io/badge/Microsoft%20Outlook-0078D4?style=for-the-badge&logo=microsoftoutlook&logoColor=white)
 ![Power Apps](https://img.shields.io/badge/Power%20Apps-742774?style=for-the-badge&logo=powerapps&logoColor=white)
 ![Power BI](https://img.shields.io/badge/Power%20BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
+
+> *Categoría: Casos de Uso Empresariales | Centro de Excelencia CX (Telecomunicaciones)
 
 > **Orquestación ágil de requerimientos con Microsoft 365: Ingesta multicanal (B2B/B2C), validación humana estratégica (Human-in-the-Loop), despliegue operativo en Planner y sincronización recurrente para consumo en Power BI.**
 
