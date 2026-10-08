@@ -1,3 +1,5 @@
+Categoría: Casos de Uso Empresariales | Centro de Excelencia CX (Telecomunicaciones)
+
 # Gestión Centralizada de Solicitudes: Research, Diseño e Implementaciones (R&D-I)
 
 ![Microsoft Forms](https://img.shields.io/badge/Microsoft%20Forms-008272?style=for-the-badge&logo=microsoftforms&logoColor=white)
