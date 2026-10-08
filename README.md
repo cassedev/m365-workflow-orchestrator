@@ -11,6 +11,8 @@
 > *Categoría: Casos de Uso Empresariales | Centro de Excelencia CX (Telecomunicaciones)
 
 > **Orquestación ágil de requerimientos con Microsoft 365: Ingesta multicanal (B2B/B2C), validación humana estratégica (Human-in-the-Loop), despliegue operativo en Planner y sincronización recurrente para consumo en Power BI.**
+>
+> [![Demo en Vivo](https://img.shields.io/badge/Demo%20Interactiva-GitHub%20Pages-blue?style=for-the-badge)](https://tu-usuario.github.io/gestion-solicitudes-rd-i/)
 
 ---
 
