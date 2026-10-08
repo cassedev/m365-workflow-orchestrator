@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión Solicitudes: Research, Diseño e Implementaciones</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <span class="px-2.5 py-1 bg-blue-600 rounded-md text-xs font-bold uppercase tracking-wider text-white">M365 Ecosystem</span>
+        <div>
+          <h1 class="text-sm font-semibold text-white leading-tight">Gestión Solicitudes: Research, Diseño e Implementaciones</h1>
+          <p class="text-xs text-slate-400">Forms &bull; Lists &bull; Power Automate &bull; Planner &bull; App Consulta &bull; Power BI</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="openMailModal()" class="relative px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold transition flex items-center gap-2 shadow-sm">
+          <span>✉️</span> Ver Correo del Usuario
+          <span id="mail-badge" class="hidden px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px] font-bold">1</span>
+        </button>
+
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-medium">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          Sync Diaria Activa
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="relative flex items-center justify-center">
+          <span class="h-3.5 w-3.5 rounded-full bg-amber-400 animate-ping absolute"></span>
+          <span class="h-3 w-3 rounded-full bg-amber-400 relative"></span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Flujo Recurrente Programado</span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 mono">Scheduled Power Automate</span>
+          </div>
+          <p class="text-xs text-slate-300 mt-0.5">
+            Sincronización en segundo plano: escanea Planner, asigna fechas límite y transiciona estados de backlog a curso.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="text-right hidden sm:block">
+          <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Próxima Ejecución en</span>
+          <span id="sync-timer" class="text-xs font-bold text-amber-300 mono">05:42:18 hs</span>
+        </div>
+        <button onclick="runDailySync()" id="btn-force-sync" class="px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-xs font-semibold transition flex items-center gap-2 group">
+          <span class="group-hover:rotate-180 transition-transform duration-500">🔄</span> Forzar Actualización Diaria
+        </button>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">Bloque 01</span>
+            <span class="text-[11px] text-slate-500">Automático</span>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-200">Ingesta & Acuse</h3>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+            Ingreso por Forms (B2B/B2C). Power Automate remite email de acuse inmediato: <em>solicitud en evaluación preliminar</em>.
+          </p>
+        </div>
+        <div class="mt-3 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex items-center gap-1.5">
+          <span>⚡</span> Forms + Mail de Acuse
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Bloque 02</span>
+            <span class="text-[11px] text-amber-400">Punto de Control</span>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-200">Validación en Lists</h3>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+            Intervención humana única. El equipo técnico valida la factibilidad directamente en Lists y aprueba el requerimiento.
+          </p>
+        </div>
+        <div class="mt-3 pt-3 border-t border-slate-800 text-[11px] text-amber-400/90 flex items-center gap-1.5">
+          <span>👤</span> Human-in-the-Loop
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Bloque 03</span>
+            <span class="text-[11px] text-slate-500">Automático</span>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-200">Planner Backlog & App</h3>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+            Crea tarea en Planner en <strong>Backlog</strong>. Dispara email con ID y link directo a la <strong>App de Consulta</strong>.
+          </p>
+        </div>
+        <div class="mt-3 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex items-center gap-1.5">
+          <span>📌</span> Tarea creada + Mail formal
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Bloque 04</span>
+            <span class="text-[11px] text-emerald-400">Diario Recurrente</span>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-200">Sync Diaria & BI</h3>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+            Flujo diario: estampa fecha límite, actualiza avance en Lists y refresca la base para la App y Power BI.
+          </p>
+        </div>
+        <div class="mt-3 pt-3 border-t border-slate-800 text-[11px] text-emerald-400 flex items-center gap-1.5">
+          <span>📊</span> Conector directo a BI
+        </div>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <section class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+        <div class="border-b border-slate-800 pb-3">
+          <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <span>🕹️</span> Ingesta de Solicitud (Forms)
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">Define los parámetros del requerimiento corporativo.</p>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-slate-400 font-medium mb-1">Servicio / Tipo:</label>
+              <select id="sim-type" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-slate-200 outline-none focus:border-blue-500">
+                <option value="Research">Research</option>
+                <option value="Diseño">Diseño</option>
+                <option value="Implementación">Implementación</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-400 font-medium mb-1">Segmento:</label>
+              <select id="sim-segment" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-slate-200 outline-none focus:border-blue-500">
+                <option value="B2B">B2B (Corporativo)</option>
+                <option value="B2C">B2C (Masivo / Clientes)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-slate-400 font-medium mb-1">Prioridad:</label>
+            <select id="sim-priority" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-slate-200 outline-none focus:border-blue-500">
+              <option value="Media">Media (Prioridad Estándar)</option>
+              <option value="Alta">Alta (Impacto Directo)</option>
+              <option value="Crítica">Crítica (Bloqueante)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-slate-400 font-medium mb-1">Título de la Solicitud:</label>
+            <input type="text" id="sim-title" value="Automatización de reporte mensual de churn para cuentas clave" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-slate-200 outline-none focus:border-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-slate-400 font-medium mb-1">Email del Solicitante:</label>
+            <input type="email" id="sim-email" value="gerencia.operaciones@empresa.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-slate-200 outline-none focus:border-blue-500">
+          </div>
+
+          <div class="pt-2 space-y-2">
+            <button id="btn-step1" onclick="runStage1()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition flex items-center justify-center gap-2 text-xs shadow-md">
+              <span>1️⃣</span> Enviar Solicitud (Forms + Acuse)
+            </button>
+
+            <button id="btn-step2" onclick="runStage2()" disabled class="w-full py-2.5 bg-amber-600/40 text-amber-200/40 font-semibold rounded-lg transition flex items-center justify-center gap-2 text-xs cursor-not-allowed border border-amber-600/20">
+              <span>2️⃣</span> Validar en Lists ➔ Crear en Planner (Backlog)
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Logs del Pipeline:</span>
+          <div id="log-box" class="h-28 overflow-y-auto bg-slate-950 rounded-lg p-2.5 text-[11px] mono text-slate-400 space-y-1 border border-slate-800/80">
+            <div>[00:00:00] Orquestador listo. Esperando nuevos registros...</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-3">
+          <div>
+            <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <span>📋</span> Base Maestra Centralizada (Microsoft Lists)
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Estados: Pendiente &bull; Backlog &bull; En Curso &bull; Completada</p>
+          </div>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 mono">
+            Items: <strong id="item-count" class="text-blue-400">3</strong>
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800 font-semibold">
+              <tr>
+                <th class="py-2.5 px-3">Ticket ID</th>
+                <th class="py-2.5 px-3">Servicio</th>
+                <th class="py-2.5 px-3">Segmento</th>
+                <th class="py-2.5 px-3">Prioridad</th>
+                <th class="py-2.5 px-3">Estado Planner</th>
+                <th class="py-2.5 px-3">Fecha Vencimiento</th>
+              </tr>
+            </thead>
+            <tbody id="table-lists" class="divide-y divide-slate-800/60 mono text-[11px]">
+              
+              <tr id="row-081">
+                <td class="py-2.5 px-3 text-blue-400 font-bold">RDI-2026-081</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20">Research</span></td>
+                <td class="py-2.5 px-3 font-sans font-semibold text-slate-300">B2B</td>
+                <td class="py-2.5 px-3 text-amber-400">Media</td>
+                <td class="py-2.5 px-3"><span class="badge-status px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">En Curso</span></td>
+                <td class="py-2.5 px-3 cell-due text-slate-300">14/10/2026</td>
+              </tr>
+
+              <tr id="row-082">
+                <td class="py-2.5 px-3 text-blue-400 font-bold">RDI-2026-082</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-pink-500/10 text-pink-300 border border-pink-500/20">Diseño</span></td>
+                <td class="py-2.5 px-3 font-sans font-semibold text-slate-300">B2C</td>
+                <td class="py-2.5 px-3 text-rose-400">Alta</td>
+                <td class="py-2.5 px-3"><span class="badge-status px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">Bloqueada</span></td>
+                <td class="py-2.5 px-3 cell-due text-rose-300">12/10/2026</td>
+              </tr>
+
+              <tr id="row-083">
+                <td class="py-2.5 px-3 text-blue-400 font-bold">RDI-2026-083</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">Implementación</span></td>
+                <td class="py-2.5 px-3 font-sans font-semibold text-slate-300">B2B</td>
+                <td class="py-2.5 px-3 text-amber-400">Media</td>
+                <td class="py-2.5 px-3"><span class="badge-status px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Completada</span></td>
+                <td class="py-2.5 px-3 cell-due text-slate-400">08/10/2026</td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-4 p-3 bg-slate-950/60 border border-slate-800 rounded-lg text-xs text-slate-400 flex items-start gap-2.5">
+          <span class="text-base">💡</span>
+          <p class="leading-relaxed">
+            <strong class="text-slate-200">Automatización Transparente:</strong> Cuando el usuario remite el formulario o se aprueba su solicitud, recibe un email automático con el identificador del ticket y un link directo a la <strong>App de Consulta</strong> para ver el estado de su requerimiento en tiempo real.
+          </p>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <div id="mail-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+      
+      <div class="px-4 py-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="p-1.5 bg-blue-600 rounded text-xs text-white">✉️</span>
+          <div>
+            <h3 class="text-xs font-bold text-white leading-tight">Buzón de Entrada del Solicitante</h3>
+            <p id="mail-user-address" class="text-[11px] text-slate-400 font-mono">gerencia.operaciones@empresa.com</p>
+          </div>
+        </div>
+        <button onclick="closeMailModal()" class="text-slate-400 hover:text-white text-lg leading-none p-1">&times;</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto flex-1 space-y-3" id="mail-inbox-container">
+        
+        <div class="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2">
+          <div class="flex justify-between items-start text-xs">
+            <div>
+              <span class="font-bold text-slate-200">Sistema Automatizado R&amp;D-I</span>
+              <span class="text-slate-500 block text-[11px]">Para: Tú &lt;gerencia.operaciones@empresa.com&gt;</span>
+            </div>
+            <span class="text-[10px] text-slate-500 mono">Ayer, 18:30 hs</span>
+          </div>
+          <div class="text-xs font-semibold text-blue-400">Requerimientos previos sincronizados</div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Las tareas asociadas a los tickets previos (RDI-2026-081, 082 y 083) han sido actualizadas en la base de datos de gestión. Puedes consultarlas en el panel central de Lists.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="px-4 py-2.5 bg-slate-950 border-t border-slate-800 flex justify-between items-center text-xs">
+        <span class="text-slate-500 text-[11px]">Simulación de notificaciones disparadas vía Power Automate</span>
+        <button onclick="closeMailModal()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-medium">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let counter = 84;
+    let pendingTicket = null;
+
+    // Reloj regresivo
+    let totalSeconds = 5 * 3600 + 42 * 60 + 18;
+    setInterval(() => {
+      if (totalSeconds > 0) totalSeconds--;
+      const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+      const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+      const s = String(totalSeconds % 60).padStart(2, '0');
+      const timerEl = document.getElementById('sync-timer');
+      if (timerEl) timerEl.textContent = `${h}:${m}:${s} hs`;
+    }, 1000);
+
+    function log(msg) {
+      const box = document.getElementById('log-box');
+      const time = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      div.innerHTML = `<span class="text-slate-500">[${time}]</span> ${msg}`;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // GESTIÓN DE LA VENTANA DE CORREO
+    function openMailModal() {
+      document.getElementById('mail-modal').classList.remove('hidden');
+      document.getElementById('mail-badge').classList.add('hidden');
+    }
+
+    function closeMailModal() {
+      document.getElementById('mail-modal').classList.add('hidden');
+    }
+
+    function appendIncomingEmail(subject, bodyHtml, timeStr) {
+      const inbox = document.getElementById('mail-inbox-container');
+      const badge = document.getElementById('mail-badge');
+      
+      const emailCard = document.createElement('div');
+      emailCard.className = "p-3.5 rounded-xl bg-slate-950 border border-blue-500/40 space-y-2 animate-in fade-in duration-300";
+      emailCard.innerHTML = `
+        <div class="flex justify-between items-start text-xs">
+          <div>
+            <span class="font-bold text-slate-100 flex items-center gap-1.5">
+              <span class="h-2 w-2 rounded-full bg-blue-400"></span> Notificación Automática R&D-I
+            </span>
+            <span class="text-slate-400 block text-[11px] mt-0.5">De: noreply@empresa.com</span>
+          </div>
+          <span class="text-[10px] text-blue-300 mono bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">${timeStr}</span>
+        </div>
+        <div class="text-xs font-semibold text-blue-300 border-b border-slate-800 pb-1.5">${subject}</div>
+        <div class="text-xs text-slate-300 leading-relaxed font-sans">${bodyHtml}</div>
+      `;
+
+      inbox.prepend(emailCard);
+      badge.classList.remove('hidden');
+    }
+
+    // BLOQUE 1: INGESTA POR FORMS + ENVÍO DEL EMAIL 1 (ACUSE)
+    function runStage1() {
+      const type = document.getElementById('sim-type').value;
+      const segment = document.getElementById('sim-segment').value;
+      const priority = document.getElementById('sim-priority').value;
+      const title = document.getElementById('sim-title').value || 'Requerimiento sin título';
+      const email = document.getElementById('sim-email').value || 'usuario@empresa.com';
+
+      document.getElementById('mail-user-address').textContent = email;
+
+      const id = `RDI-2026-0${counter++}`;
+      pendingTicket = { id, type, segment, priority, title, email };
+
+      log(`<span class="text-blue-400">MS Forms:</span> Ingresó requerimiento [${id}] - Segmento: <strong>${segment}</strong> - "${title}"`);
+      log(`<span class="text-emerald-400">Power Automate:</span> Email de acuse enviado a <em>${email}</em>.`);
+      log(`<span class="text-amber-400">MS Lists:</span> Registro asentado como <strong class="text-amber-300">Pendiente Aprobación</strong>.`);
+
+      // Disparar correo de acuse en el buzón simulado
+      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      appendIncomingEmail(
+        `[Acuse de Recibo] Solicitud Registrada: ${id}`,
+        `<p>Hola,</p>
+         <p class="mt-1">Confirmamos la recepción de tu requerimiento <strong>"${title}"</strong> correspondiente al servicio <strong>${type} (${segment})</strong>.</p>
+         <p class="mt-1">El ticket se encuentra actualmente en <strong>Evaluación Técnica Preliminar</strong>. Recibirás una notificación en cuanto el equipo valide su factibilidad.</p>
+         <p class="mt-2 text-slate-400 text-[11px]">Atentamente,<br>Equipo de Research, Diseño e Implementaciones</p>`,
+        nowTime
+      );
+
+      // Fila provisional en Lists
+      const tbody = document.getElementById('table-lists');
+      const tr = document.createElement('tr');
+      tr.id = `row-${id}`;
+      tr.className = "bg-amber-950/20";
+      tr.innerHTML = `
+        <td class="py-2.5 px-3 text-blue-400 font-bold">${id}</td>
+        <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20">${type}</span></td>
+        <td class="py-2.5 px-3 font-sans font-semibold text-slate-300">${segment}</td>
+        <td class="py-2.5 px-3 text-amber-300">${priority}</td>
+        <td class="py-2.5 px-3"><span id="badge-${id}" class="badge-status px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Pendiente Aprobación</span></td>
+        <td class="py-2.5 px-3 cell-due text-slate-500" id="due-${id}">--</td>
+      `;
+      tbody.prepend(tr);
+
+      const countEl = document.getElementById('item-count');
+      countEl.textContent = parseInt(countEl.textContent) + 1;
+
+      // Actualizar botones
+      document.getElementById('btn-step1').disabled = true;
+      document.getElementById('btn-step1').classList.add('opacity-50', 'cursor-not-allowed');
+
+      const btn2 = document.getElementById('btn-step2');
+      btn2.disabled = false;
+      btn2.className = "w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-lg transition flex items-center justify-center gap-2 text-xs shadow-md";
+    }
+
+    // BLOQUE 2 & 3: VALIDACIÓN EN LISTS + EMAIL 2 (CONFIRMACIÓN & LINK APP)
+    function runStage2() {
+      if (!pendingTicket) return;
+      const { id, type, segment, email, title } = pendingTicket;
+
+      log(`<span class="text-amber-400">Human-in-the-Loop:</span> Equipo técnico aprobó la factibilidad de [${id}] en Lists.`);
+
+      // Actualizar estado a Backlog y sin vencimiento
+      const badge = document.getElementById(`badge-${id}`);
+      badge.className = "badge-status px-2 py-0.5 rounded bg-slate-700 text-slate-300 border border-slate-600";
+      badge.textContent = "Backlog";
+
+      document.getElementById(`due-${id}`).textContent = "-- (Sin fecha fijada)";
+      document.getElementById(`due-${id}`).className = "py-2.5 px-3 cell-due text-slate-500 italic";
+
+      const tr = document.getElementById(`row-${id}`);
+      tr.classList.remove('bg-amber-950/20');
+      tr.classList.add('bg-slate-900');
+
+      log(`<span class="text-indigo-400">Power Automate:</span> Tarea generada en Planner (${type}) en columna <strong>Backlog</strong>.`);
+      log(`<span class="text-emerald-400">Power Automate:</span> Email formal enviado a <em>${email}</em> con ID y enlace a la App de Consulta.`);
+
+      // Disparar correo formal con botón de la App de Consulta
+      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      appendIncomingEmail(
+        `[Solicitud Aprobada] Tarea en Backlog: ${id}`,
+        `<p>Hola,</p>
+         <p class="mt-1">Tu requerimiento <strong>"${title}"</strong> ha sido evaluado favorablemente y pasó al <strong>Backlog de trabajo</strong> del equipo (${type} - ${segment}).</p>
+         <div class="my-3 p-3 bg-slate-900 border border-slate-800 rounded-lg">
+           <span class="text-[11px] text-slate-400 block">Identificador Oficial:</span>
+           <span class="text-sm font-bold text-blue-400 mono">${id}</span>
+         </div>
+         <p class="mt-1">Puedes seguir el progreso, las fechas estimadas y al responsable en cualquier momento a través de la aplicación de seguimiento:</p>
+         <div class="mt-3">
+           <a href="javascript:void(0)" onclick="alert('Simulación de acceso: Aquí el usuario entra directamente a la Power App de consulta con su ticket ' + '${id}')" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold text-xs transition">
+             <span>📱</span> Abrir App de Consulta de Estado
+           </a>
+         </div>
+         <p class="mt-3 text-slate-400 text-[11px]">Sistema de Notificaciones Operativas M365</p>`,
+        nowTime
+      );
+
+      // Reset controles
+      const btn2 = document.getElementById('btn-step2');
+      btn2.disabled = true;
+      btn2.className = "w-full py-2.5 bg-amber-600/40 text-amber-200/40 font-semibold rounded-lg transition flex items-center justify-center gap-2 text-xs cursor-not-allowed border border-amber-600/20";
+
+      const btn1 = document.getElementById('btn-step1');
+      btn1.disabled = false;
+      btn1.classList.remove('opacity-50', 'cursor-not-allowed');
+
+      pendingTicket = null;
+    }
+
+    // BLOQUE 4: FORZAR SINCRONIZACIÓN DIARIA
+    function runDailySync() {
+      const btn = document.getElementById('btn-force-sync');
+      btn.classList.add('animate-pulse');
+
+      log(`<span class="text-amber-300">Scheduled Flow (Power Automate):</span> ⚡ Ejecución de sincronización diaria forzada manual.`);
+      log(`<span class="text-amber-300">Planner Sync:</span> Escaneando tableros... Evaluando cambios de columna y sprints activos.`);
+
+      setTimeout(() => {
+        const rows = document.querySelectorAll('#table-lists tr');
+        let updatedCount = 0;
+
+        rows.forEach(row => {
+          const badge = row.querySelector('.badge-status');
+          const dueCell = row.querySelector('.cell-due');
+
+          if (badge && badge.textContent === "Backlog") {
+            badge.className = "badge-status px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+            badge.textContent = "En Curso";
+
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 5);
+            dueCell.textContent = targetDate.toLocaleDateString();
+            dueCell.className = "py-2.5 px-3 cell-due text-emerald-300 font-semibold";
+            updatedCount++;
+          }
+        });
+
+        totalSeconds = 24 * 3600;
+        btn.classList.remove('animate-pulse');
+
+        log(`<span class="text-emerald-400">Lists Sync Completa:</span> ${updatedCount > 0 ? `${updatedCount} tareas pasaron de Backlog a 'En Curso' con fecha de vencimiento estipulada.` : 'Todas las tareas sincronizadas al día.'}`);
+        log(`<span class="text-cyan-400">Power BI Layer:</span> Metadata de Lists actualizada para refresco de dataset.`);
+      }, 700);
+    }
+  </script>
+</body>
+</html>
