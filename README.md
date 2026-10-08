@@ -1,5 +1,13 @@
 # Gestión Centralizada de Solicitudes: Research, Diseño e Implementaciones (R&D-I)
 
+![Microsoft Forms](https://img.shields.io/badge/Microsoft%20Forms-008272?style=for-the-badge&logo=microsoftforms&logoColor=white)
+![Power Automate](https://img.shields.io/badge/Power%20Automate-0066FF?style=for-the-badge&logo=powerautomate&logoColor=white)
+![Microsoft Lists](https://img.shields.io/badge/Microsoft%20Lists-6A1B9A?style=for-the-badge&logo=sharepoint&logoColor=white)
+![Microsoft Planner](https://img.shields.io/badge/Microsoft%20Planner-31752F?style=for-the-badge&logo=microsoft&logoColor=white)
+![Outlook](https://img.shields.io/badge/Microsoft%20Outlook-0078D4?style=for-the-badge&logo=microsoftoutlook&logoColor=white)
+![Power Apps](https://img.shields.io/badge/Power%20Apps-742774?style=for-the-badge&logo=powerapps&logoColor=white)
+![Power BI](https://img.shields.io/badge/Power%20BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
+
 > **Orquestación ágil de requerimientos con Microsoft 365: Ingesta multicanal (B2B/B2C), validación humana estratégica (Human-in-the-Loop), despliegue operativo en Planner y sincronización recurrente para consumo en Power BI.**
 
 ---
